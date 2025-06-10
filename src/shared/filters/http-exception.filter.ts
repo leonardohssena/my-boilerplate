@@ -1,4 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common'
+import { trace } from '@opentelemetry/api'
 import { Request, Response } from 'express'
 
 import sanitizeData from '@shared/helpers/sanitezed-data.helper'
@@ -14,7 +15,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const statusCode = exception.getStatus ? exception.getStatus() : 500
     const start = Number(request.headers['x-start-time'])
 
-    const correlationHeader = request.headers['x-correlation-id'] || 'N/A'
+    const correlationHeader =
+      request.headers['x-correlation-id'] || trace.getActiveSpan()?.spanContext()?.traceId || 'N/A'
     const { method, originalUrl } = request
     const responseTime = Date.now() - start
     response.setHeader('X-Duration-Time', responseTime)

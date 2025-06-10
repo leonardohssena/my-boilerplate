@@ -1,12 +1,14 @@
+import 'winston-mongodb'
+
 import { AsyncLocalStorage } from 'async_hooks'
 
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { context, trace } from '@opentelemetry/api'
+import { OpenTelemetryTransportV3 } from '@opentelemetry/winston-transport'
 import * as winston from 'winston'
 
 import sanitizeData from '@shared/helpers/sanitezed-data.helper'
-
-import 'winston-mongodb'
 
 type StatusOptions = 'SUCCESS' | 'ERROR' | 'WARNING' | 'DEBUG'
 type LevelOptions = 'info' | 'warn' | 'error' | 'debug'
@@ -27,6 +29,7 @@ export class LoggerService implements NestLoggerService {
         new winston.transports.Console({
           format: winston.format.prettyPrint(),
         }),
+        new OpenTelemetryTransportV3(),
       ],
     }
     this.loggerTransaction = winston.createLogger({

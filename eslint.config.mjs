@@ -35,14 +35,14 @@ export default [
         'error',
         {
           groups: [
+            // Side effect imports.
+            ['^\\u0000'],
             // Node.js builtins.
             [`^(${builtinModules.join('|')})(/|$)`],
             // Packages. `react` related packages come first.
             ['^react', '^@?\\w'],
             // Internal packages.
             ['^(@application|@domain|@infra|@interfaces|@shared|@config)(/.*|$)'],
-            // Side effect imports.
-            ['^\\u0000'],
             // Parent imports. Put `..` last.
             ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
             // Other relative imports. Put same-folder imports and `.` last.

@@ -1,4 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus, Logger } from '@nestjs/common'
+import { trace } from '@opentelemetry/api'
 import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
 
@@ -14,7 +15,8 @@ export class PrismaClientExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>()
     const start = Number(request.headers['x-start-time'])
 
-    const correlationHeader = request.headers['x-correlation-id'] || 'N/A'
+    const correlationHeader =
+      request.headers['x-correlation-id'] || trace.getActiveSpan()?.spanContext()?.traceId || 'N/A'
     const { method, originalUrl } = request
     const responseTime = Date.now() - start
     response.setHeader('X-Duration-Time', responseTime)

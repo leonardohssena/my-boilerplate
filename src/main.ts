@@ -1,11 +1,12 @@
+import '@infra/observability/tracing'
+import 'reflect-metadata'
+
 import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 import { LoggerService } from '@infra/logger/logger.service'
-
-import 'reflect-metadata'
 
 import { AppModule } from './app.module'
 

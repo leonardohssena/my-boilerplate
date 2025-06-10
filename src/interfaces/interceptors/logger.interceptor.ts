@@ -1,5 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
 import { Logger } from '@nestjs/common'
+import { trace } from '@opentelemetry/api'
 import { Request, Response } from 'express'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
@@ -14,7 +15,8 @@ export class LoggingInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp()
     const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
-    const correlationHeader = request.header('x-correlation-id') || uuid()
+    const correlationHeader =
+      request.header('x-correlation-id') || trace.getActiveSpan()?.spanContext()?.traceId || uuid()
     const start = Date.now()
 
     request.headers['x-correlation-id'] = correlationHeader
