@@ -13,8 +13,12 @@ export class Auth0UserDto {
   picture: string
   updated_at: string
   user_id: string
-  user_metadata: object
+  user_metadata: { [key: string]: unknown }
+  app_metadata: { [key: string]: unknown }
   username: string
+  last_ip: string
+  last_login: string
+  logins_count: number
 
   constructor(partial: Partial<Auth0UserDto> = {}) {
     Object.assign(this, partial)

@@ -13,13 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
-  name      String
-  auth0Id   String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+type DeletedBy {
+  id        String
+  deletedAt DateTime
+}
 
-  @@map("users")
+model Account {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  nickname  String
+  picture   String?
+  isActive  Boolean    @default(true)
+  deleted   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  deletedBy DeletedBy?
+
+  @@map("accounts")
 }

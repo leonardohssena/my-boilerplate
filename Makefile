@@ -19,6 +19,7 @@ help:
 	@echo "  make prisma-update   - Generate and Update Prisma client (ORM)"
 	@echo "  make prisma-studio   - Open Prisma Studio to view and manage the database"
 	@echo "  make update-libs     - Update project dependencies"
+	@echo "  make check-libs      - Check project dependencies"
 	@echo "  make format          - Format the code using Prettier"
 	@echo "  make lint            - Run ESLint to check code quality"
 	@echo "  make clean           - Clean up temporary files and caches"
@@ -75,6 +76,13 @@ update-libs:
 	@echo "Updating project dependencies..."
 	ncu -u
 	$(PNPM) install
+
+# Check project dependencies
+.PHONY: check-libs
+check-libs:
+	@echo "Checking project dependencies..."
+	depcheck
+
 
 # Clean up temporary files and caches
 .PHONY: clean

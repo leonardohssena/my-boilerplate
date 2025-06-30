@@ -28,6 +28,9 @@
       ],
       "@config/*": [
         "config/*"
+      ],
+      "@test/*": [
+        "../test/*"
       ]
     },
     "incremental": true,
@@ -37,7 +40,8 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",

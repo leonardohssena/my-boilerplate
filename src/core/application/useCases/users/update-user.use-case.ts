@@ -1,35 +1,39 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { Auth0Service } from '@application/services/auth0/auth0.service'
 import { UpdateAuth0UserDto } from '@application/services/auth0/dto'
 import User from '@domain/models/users.model'
-import { IUsersRepository } from '@domain/repositories/users/users.protocol'
 import { UpdateUserDto } from '@interfaces/dtos/users'
 
 @Injectable()
 export class UpdateUserUseCase {
-  constructor(
-    private readonly userRepository: IUsersRepository,
-    private readonly auth0Service: Auth0Service,
-  ) {}
+  constructor(private readonly auth0Service: Auth0Service) {}
 
-  async execute(id: string, userData: UpdateUserDto): Promise<User> {
-    const user = await this.userRepository.findOne({ id })
-    if (!user) throw new NotFoundException('User not found.')
+  async execute(sub: string, userData: UpdateUserDto): Promise<User> {
+    const existingUser = await this.auth0Service.getUserByAuth0Id(sub)
+    if (!existingUser) throw new NotFoundException(`The user has not found.`)
 
-    if (userData.email && userData.email !== user.email) {
-      const existingUser = await this.userRepository.findOne({ email: userData.email })
-      if (existingUser) throw new ConflictException('Email already in use.')
+    const user_metadata = {
+      ...existingUser.user_metadata,
+      position: userData.position || existingUser.user_metadata?.position,
     }
 
     const updateAuth0UserDto = new UpdateAuth0UserDto({
-      email: userData.email,
-      username: userData.name,
       name: userData.name,
+      user_metadata,
     })
-    await this.auth0Service.updateUser(user.auth0Id, updateAuth0UserDto)
+    const user = await this.auth0Service.updateUser(sub, updateAuth0UserDto)
 
-    Object.assign(user, userData)
-    return this.userRepository.update(id, user)
+    return new User({
+      id: user.user_id,
+      name: user.name,
+      nickname: user.nickname,
+      email: user.email,
+      email_verified: user.email_verified,
+      picture: user.picture,
+      position: user.user_metadata?.position as string,
+      createdAt: new Date(user.created_at),
+      updatedAt: new Date(user.updated_at),
+    })
   }
 }

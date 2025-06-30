@@ -19,8 +19,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const responseTime = Date.now() - start
     response.setHeader('X-Duration-Time', responseTime)
 
-    const exceptionResponse = exception.getResponse()
-    const responseData = typeof exceptionResponse === 'string' ? { message: exceptionResponse } : exceptionResponse
+    const exceptionResponse = exception.getResponse?.() || exception.message
+    const responseData: Record<string, unknown> =
+      typeof exceptionResponse === 'string'
+        ? { message: exceptionResponse }
+        : (exceptionResponse as Record<string, unknown>)
+
+    if (responseData.message && Array.isArray(responseData.message)) {
+      responseData.message = responseData.message.join(', ')
+    }
 
     this.logger.error(
       `Response With Exception [${correlationHeader}]: ${method} ${originalUrl} ${statusCode} - ${responseTime}ms`,

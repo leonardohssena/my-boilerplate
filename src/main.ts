@@ -27,13 +27,23 @@ async function bootstrap() {
       .setTitle(APP_NAME)
       .setDescription(APP_DESCRIPTION)
       .setVersion(API_VERSION)
+      .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'JWT')
+      .addSecurityRequirements('JWT')
       .build()
 
     const document = SwaggerModule.createDocument(app, options)
     SwaggerModule.setup('api', app, document)
     Logger.log('Mapped {/api, GET} Swagger api route', 'RouterExplorer')
 
-    app.useGlobalPipes(new ValidationPipe())
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      }),
+    )
 
     await app.listen(PORT)
     Logger.log(`🚀  Server ready at http://${HOST}:${PORT})}`, 'Bootstrap')

@@ -3,8 +3,11 @@ import { ConfigService } from '@nestjs/config'
 import { ApiTags } from '@nestjs/swagger'
 import { HealthCheck, HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus'
 
+import { Public } from '@infra/auth/interfaces/public'
+
 @ApiTags('Health Check')
 @Controller('health')
+@Public()
 export class HealthController {
   constructor(
     private health: HealthCheckService,

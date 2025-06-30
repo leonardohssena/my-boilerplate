@@ -15,6 +15,20 @@ export class UserDTO {
 
   @Expose()
   @ApiProperty({
+    description: 'The name of the user',
+    example: 'John Doe',
+  })
+  name: string
+
+  @Expose()
+  @ApiProperty({
+    description: 'The nickname of the user',
+    example: 'John Doe',
+  })
+  nickname: string
+
+  @Expose()
+  @ApiProperty({
     description: 'The unique email of the user',
     example: 'john.doe@email.com',
   })
@@ -22,10 +36,24 @@ export class UserDTO {
 
   @Expose()
   @ApiProperty({
-    description: 'The name of the user',
-    example: 'John Doe',
+    description: 'The email verification status of the user',
+    example: true,
   })
-  name: string
+  email_verified: boolean
+
+  @Expose()
+  @ApiProperty({
+    description: 'The picture of the user',
+    example: 'https://example.com/image.jpg',
+  })
+  picture: string
+
+  @Expose()
+  @ApiProperty({
+    description: 'The position of the user',
+    example: 'Developer',
+  })
+  position: string
 
   @Expose()
   @ApiProperty({ description: 'The creation date of the user' })
